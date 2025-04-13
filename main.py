@@ -1,6 +1,12 @@
 import menu
 import pygame
 
+
+# pygame
+
+pygame.init()
+
+# Grid and layout settings
 GRID_SIZE = 4
 BLOCK_SIZE = 100
 STREET_WIDTH = 40 
