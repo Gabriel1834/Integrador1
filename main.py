@@ -1,5 +1,7 @@
 import pygame
 
+# pygame
+
 pygame.init()
 
 # Grid and layout settings
