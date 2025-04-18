@@ -10,7 +10,7 @@ BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
 RED = (200, 0, 0)
 
-# Fonte
+# Fonte'
 font = pygame.font.SysFont(None, 48)
 
 # Comandos possíveis
@@ -33,36 +33,22 @@ def show_message(message, color):
     )
 
 
-def draw_challenge(command, score):
+def draw_challenge(command):
     main.screen.fill(BLACK)
     instruction = font.render(command, True, WHITE)
     main.screen.blit(
         instruction,
         (main.WIDTH // 2 - instruction.get_width() // 2, main.HEIGHT // 2 - 50),
     )
-    score_text = font.render(f"Pontuação: {score}", True, WHITE)
-    main.screen.blit(score_text, (20, 20))
     pygame.display.flip()
-
-
-def show_game_over():
-    main.screen.fill(BLACK)
-    over_text = font.render("Game Over!", True, RED)
-    main.screen.blit(
-        over_text,
-        (main.WIDTH // 2 - over_text.get_width() // 2, main.HEIGHT // 2 - 20),
-    )
-    pygame.display.flip()
-    pygame.time.delay(3000)
 
 
 def start_game():
     global running
     running = True
-    score = 0
     while running:
         command = random.choice(commands)
-        draw_challenge(command, score)
+        draw_challenge(command)
         waiting_input = True
 
         while waiting_input:
@@ -73,21 +59,15 @@ def start_game():
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == keys_map[command]:
-                        score += 10
-                        draw_challenge(command, score)
+                        draw_challenge(command)
                         show_message("Parabéns, você acertou!", GREEN)
                     else:
-                        score -= 10
-                        draw_challenge(command, score)
+                        draw_challenge(command)
                         show_message("Que pena, você errou!", RED)
 
                     pygame.display.flip()
                     pygame.time.delay(1500)
                     waiting_input = False
-
-                    if score < 0:
-                        show_game_over()
-                        running = False
 
         clock.tick(60)
 
