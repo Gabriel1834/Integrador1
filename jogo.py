@@ -37,24 +37,40 @@ def draw_challenge(command):
 
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
-    values = []
+    # values = []
 
-    while len(values) < num_values:
-        try:
-            line = ser.readline().decode(errors='ignore').strip()
-            if line.startswith(prefix):
-                try:
-                    val = int(line[len(prefix):])
-                    values.append(val)
-                except ValueError:
-                    continue
-        except Exception as e:
-            print("Erro ao ler da serial:", e)
-            break
+    # while len(values) < num_values:
+    #     try:
+    #         line = ser.readline().decode(errors='ignore').strip()
+    #         if line.startswith(prefix):
+    #             try:
+    #                 val = int(line[len(prefix):])
+    #                 values.append(val)
+    #             except ValueError:
+    #                 continue
+    #     except Exception as e:
+    #         print("Erro ao ler da serial:", e)
+    #         break
 
-    if not values:
+    # if not values:
+    #     return None
+    # return sum(values) // len(values)
+    value = 0
+    port = 0
+    try:
+        line = ser.readline().decode(errors='ignore').strip()
+        if line:
+            sensor = line.split(':')
+            port = sensor[1].replace('VAL', '')
+            value = sensor[2]
+    except Exception as e:
+        print("Erro ao ler da serial:", e)
+
+    if value==0 or port==0:
         return None
-    return sum(values) // len(values)
+    else:
+        return port, value
+
 
 
 # Thread que lê valor do sensor
@@ -78,52 +94,59 @@ def start_game():
         return
 
     while running:
-        command = random.choice(commands)
-        draw_challenge(command)
-        waiting_input = True
+        # command = random.choice(commands)
+        # draw_challenge(command)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                break
 
+        waiting_input = True
         # Inicia leitura em thread
         sensor_result = None
         sensor_thread_done = False
         thread = threading.Thread(target=read_sensor_thread, args=(ser,))
         thread.start()
+        #Primeiro Nivel
 
+        #Esperando resultado do sensor
         while waiting_input:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    break
 
+            # if sensor_thread_done:
+            #     if sensor_result is not None:
+            #         print("Valor do sensor:", sensor_result)
+            #         if command == "Vá para frente":
+            #             if sensor_result > 4081:
+            #                 show_message("Parabéns, você acertou!", GREEN)
+            #             else:
+            #                 show_message("Que pena, você errou!", RED)
+            #         elif command == "Vire à direita":
+            #             if sensor_result > 3850 and sensor_result < 4081:
+            #                 show_message("Parabéns, você acertou!", GREEN)
+            #             else:
+            #                 show_message("Que pena, você errou!", RED)
+            #         elif command == "Vire à esquerda":
+            #             if sensor_result < 3850 and sensor_result > 3000:
+            #                 show_message("Parabéns, você acertou!", GREEN)
+            #             else:
+            #                 show_message("Que pena, você errou!", RED)
+
+            #         pygame.display.flip()
+            #         pygame.time.delay(1500)
+            #     else:
+            #         print("Valor inválido recebido")
             if sensor_thread_done:
                 if sensor_result is not None:
-                    print("Valor do sensor:", sensor_result)
-                    if command == "Vá para frente":
-                        if sensor_result > 4081:
-                            show_message("Parabéns, você acertou!", GREEN)
-                        else:
-                            show_message("Que pena, você errou!", RED)
-                    elif command == "Vire à direita":
-                        if sensor_result > 3850 and sensor_result < 4081:
-                            show_message("Parabéns, você acertou!", GREEN)
-                        else:
-                            show_message("Que pena, você errou!", RED)
-                    elif command == "Vire à esquerda":
-                        if sensor_result < 3850 and sensor_result > 3000:
-                            show_message("Parabéns, você acertou!", GREEN)
-                        else:
-                            show_message("Que pena, você errou!", RED)
-
-                    pygame.display.flip()
-                    pygame.time.delay(1500)
-                else:
-                    print("Valor inválido recebido")
+                    #logica de validacao do sensor
+                    print(sensor_result)
+                    # show_message(sensor_result, GREEN)
 
                 waiting_input = False
 
                 pygame.time.delay(500)
                 ser.reset_input_buffer()
 
-            clock.tick(60)
+                clock.tick(60)
 
     ser.close()
     pygame.quit()
