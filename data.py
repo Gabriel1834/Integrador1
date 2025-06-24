@@ -6,7 +6,6 @@ GRAY = (100, 100, 100)
 HIGHLIGHT = (0, 200, 200)
 FADECOLOR = (0, 300, 10)
 frase_objetivo = ["Olá! Boas vindas à Patoville!",
-                  "cutscene",
                 "Eu sou a Miku e te ajudarei a conhecer a cidade.",
                 "Nós estamos na frente da entrada *sul* da *Praça Central*.",
                 "Nela foi onde os fundadores moraram e deram inicio a nossa cidade.",

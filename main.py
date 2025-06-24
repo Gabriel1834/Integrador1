@@ -34,19 +34,26 @@ sensor_thread_done = False
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
     value = 0
     port = 0
-    try:
+    running2 = True
+    while running2:
         line = ser.readline().decode(errors='ignore').strip()
-        if line:
-            sensor = line.split(':')
-            port = sensor[1].replace('VAL', '')
-            value = sensor[2]
-    except Exception as e:
-        print("Erro ao ler da serial:", e)
+        print(line)
+        if line.startswith("Pino"):
+            running2 = False
+            return line
+        # if line:
+        #     sensor = line.split(':')
+        #     port = sensor[1].replace('VAL', '')
+        #     value = sensor[2]
+        # try:
+        #     line = ser.readline().decode(errors='ignore').strip()
+        #     if line:
+        #         sensor = line.split(':')
+        #         port = sensor[1].replace('VAL', '')
+        #         value = sensor[2]
+        # except Exception as e:
+        #     print("Erro ao ler da serial:", e)
 
-    if value==0 or port==0:
-        return None
-    else:
-        return port, value
 
 
 # Thread que lê valor do sensor
@@ -118,22 +125,20 @@ def start_game():
                             thread.start()
                             #Primeiro Nivel
                             while waiting_input:
-                                data.estado = 'cutscene'
                                 if sensor_thread_done:
+                                    print(sensor_result)
                                     if sensor_result is not None:
                                         #logica de validacao do sensor
-                                        print(sensor_result)
-                                        # show_message(sensor_result, GREEN)
-
-                                waiting_input = False
-                                data.estado = 'dialogo'
+                                        print("entrou")
+                                        waiting_input = False
+                                        data.estado = 'cutscene'
                         else:
                             data.frase_atual = data.frase_objetivo[data.index_frase]
                             dialogo.show_message(data.frase_atual, data.BLACK)
-                    elif(data.estado == 'cutscene'):
-                        screen.fill(data.BLACK)
-                        data.estado = 'hospital'
-                        cv2.destroyAllWindows()
+                    # elif(data.estado == 'cutscene'):
+                    #     screen.fill(data.BLACK)
+                    #     data.estado = 'hospital'
+                    #     cv2.destroyAllWindows()
 
         pygame.display.flip()
         delta_time = clock.tick(60) / 1000
