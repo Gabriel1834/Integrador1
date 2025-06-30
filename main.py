@@ -24,35 +24,24 @@ miku_close_img = pygame.image.load(data.miku_talking_close).convert()
 miku_open_img = pygame.transform.scale(miku_open_img, (data.width, data.height))
 miku_close_img = pygame.transform.scale(miku_close_img, (data.width, data.height))
 
+
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
 fps = video.get(cv2.CAP_PROP_FPS)
 
 sensor_result = None
 sensor_thread_done = False
+waiting_input = False
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
-    value = 0
-    port = 0
+    global waiting_input
     running2 = True
     while running2:
         line = ser.readline().decode(errors='ignore').strip()
         print(line)
-        if line.startswith("Pino"):
+        if line.startswith("Pino") and waiting_input == True:
             running2 = False
-            return line
-        # if line:
-        #     sensor = line.split(':')
-        #     port = sensor[1].replace('VAL', '')
-        #     value = sensor[2]
-        # try:
-        #     line = ser.readline().decode(errors='ignore').strip()
-        #     if line:
-        #         sensor = line.split(':')
-        #         port = sensor[1].replace('VAL', '')
-        #         value = sensor[2]
-        # except Exception as e:
-        #     print("Erro ao ler da serial:", e)
+    return line
 
 
 
@@ -77,14 +66,21 @@ def cutscene(clock):
         # Converte a imagem do OpenCV (BGR) para uma superfície do Pygame (RGB)
         img_red = cv2.resize(img, (data.width, data.height))
         screen.blit(pygame.image.frombuffer(img_red.tobytes(), (data.width, data.height), "BGR"), (0, 0))
+    else:
+        data.frase_atual = ""
+        data.index_frase += 1
+        data.letra = len(data.frase_objetivo[data.index_frase])
+        data.estado = "dialogo"
+
     pygame.display.flip()
     clock.tick(fps)
 
 def start_game():
+    dialogo.frase_acabou['frase_acabou'] = False
     running = True
     clock = pygame.time.Clock()
     delta_time = 0.1
-    global sensor_result, sensor_thread_done
+    global sensor_result, sensor_thread_done, waiting_input
 
     # Abrir porta serial uma vez só
     try:
@@ -94,12 +90,41 @@ def start_game():
     except Exception as e:
         print("Erro ao abrir porta serial:", e)
         return
+    sensor_result = None
+    sensor_thread_done = False
+    thread = threading.Thread(target=read_sensor_thread, args=(ser,))
+    thread.start()
 
     while running:
         if(data.estado == 'menu'):
             menu.start()
         elif(data.estado == 'dialogo'):
-            dialogo.gato()
+            if dialogo.frase_acabou['frase_acabou']:
+                print("entrou no if da frase")
+                data.estado = 'sensor'
+            else:
+                dialogo.gato()
+        elif(data.estado == 'sensor'):
+            print("entrou no if do sensor")
+            waiting_input = True
+            # Inicia leitura em thread
+            #Primeiro Nivel
+            while waiting_input:
+                if sensor_thread_done:
+                    print(sensor_result)
+                    if sensor_result is not None:
+                        #logica de validacao do sensor
+                        print("entrou")
+                        data.estado = 'cutscene'
+                        waiting_input = False
+                        # resetando o valor do sensor
+                        ser.setDTR(False)
+                        ser.setRTS(False)
+                        sensor_result = None
+                        sensor_thread_done = False
+                    else:
+                        waiting_input = False
+            dialogo.frase_acabou['frase_acabou'] = False
         elif(data.estado == 'cutscene'):
             cutscene(clock)
         elif(data.estado == 'fade'):
@@ -117,28 +142,16 @@ def start_game():
                         menu.game_selected()
                     elif(data.estado == 'dialogo'):
                         if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase])):
-                            waiting_input = True
-                            # Inicia leitura em thread
-                            sensor_result = None
-                            sensor_thread_done = False
-                            thread = threading.Thread(target=read_sensor_thread, args=(ser,))
-                            thread.start()
-                            #Primeiro Nivel
-                            while waiting_input:
-                                if sensor_thread_done:
-                                    print(sensor_result)
-                                    if sensor_result is not None:
-                                        #logica de validacao do sensor
-                                        print("entrou")
-                                        waiting_input = False
-                                        data.estado = 'cutscene'
+                            print(dialogo.frase_acabou['frase_acabou'])
+                            # frase_acabou = True
+                            #data.estado = "cutscene"
                         else:
                             data.frase_atual = data.frase_objetivo[data.index_frase]
                             dialogo.show_message(data.frase_atual, data.BLACK)
-                    # elif(data.estado == 'cutscene'):
-                    #     screen.fill(data.BLACK)
-                    #     data.estado = 'hospital'
-                    #     cv2.destroyAllWindows()
+                    elif(data.estado == 'cutscene'):
+                        screen.fill(data.BLACK)
+                        data.estado = 'dialogo'
+                        # cv2.destroyAllWindows()
 
         pygame.display.flip()
         delta_time = clock.tick(60) / 1000
