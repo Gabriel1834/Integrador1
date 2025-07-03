@@ -6,6 +6,7 @@ import menu
 import dialogo
 import serial
 import threading
+import re
 
 pygame.init()
 
@@ -24,6 +25,14 @@ miku_close_img = pygame.image.load(data.miku_talking_close).convert()
 miku_open_img = pygame.transform.scale(miku_open_img, (data.width, data.height))
 miku_close_img = pygame.transform.scale(miku_close_img, (data.width, data.height))
 
+balao_img = pygame.image.load(data.balao).convert()
+balao_img = pygame.transform.scale(balao_img, (data.width, data.height))
+
+hospital_img = pygame.image.load(data.hospital).convert()
+hospital_img = pygame.transform.scale(hospital_img, (data.width, data.height))
+
+background = miku_open_img
+background2 = miku_close_img
 
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
@@ -40,8 +49,20 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
         line = ser.readline().decode(errors='ignore').strip()
         print(line)
         if line.startswith("Pino") and waiting_input == True:
-            running2 = False
-    return line
+            parte_pino_str, parte_valor_str = line.split(':')
+
+            pino_match = re.search(r'\d+', parte_pino_str)
+            if pino_match:
+                pino = int(pino_match.group())
+            else:
+                pino = None
+            valor = int(parte_valor_str)
+            if(background == miku_open_img and pino == data.hospital_valor[0] and (valor > data.hospital_valor[1] - 100) or (valor < data.hospital_valor[1] + 100)):
+                running2 = False
+                return line
+            elif(background == hospital_img and pino == data.aquario_valor[0] and valor == data.aquario_valor[1]):
+                running2 = False
+                return line
 
 
 
@@ -61,6 +82,7 @@ def fade_out():
         pygame.time.delay(30)
 
 def cutscene(clock):
+    global background, background2
     success, img = video.read()
     if success:
         # Converte a imagem do OpenCV (BGR) para uma superfície do Pygame (RGB)
@@ -68,8 +90,10 @@ def cutscene(clock):
         screen.blit(pygame.image.frombuffer(img_red.tobytes(), (data.width, data.height), "BGR"), (0, 0))
     else:
         data.frase_atual = ""
-        data.index_frase += 1
+        data.index_frase += 2
         data.letra = len(data.frase_objetivo[data.index_frase])
+        background = hospital_img
+        background2 = hospital_img
         data.estado = "dialogo"
 
     pygame.display.flip()
@@ -103,7 +127,7 @@ def start_game():
                 print("entrou no if da frase")
                 data.estado = 'sensor'
             else:
-                dialogo.gato()
+                dialogo.gato(data.index_frase, background, background2)
         elif(data.estado == 'sensor'):
             print("entrou no if do sensor")
             waiting_input = True
@@ -111,10 +135,10 @@ def start_game():
             #Primeiro Nivel
             while waiting_input:
                 if sensor_thread_done:
-                    print(sensor_result)
                     if sensor_result is not None:
                         #logica de validacao do sensor
-                        print("entrou")
+                        # if sensor_result: 
+                            
                         data.estado = 'cutscene'
                         waiting_input = False
                         # resetando o valor do sensor
@@ -142,9 +166,9 @@ def start_game():
                         menu.game_selected()
                     elif(data.estado == 'dialogo'):
                         if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase])):
-                            print(dialogo.frase_acabou['frase_acabou'])
-                            # frase_acabou = True
-                            #data.estado = "cutscene"
+                            data.frase_atual = ""
+                            data.index_frase += 1
+                            data.letra = len(data.frase_objetivo[data.index_frase])
                         else:
                             data.frase_atual = data.frase_objetivo[data.index_frase]
                             dialogo.show_message(data.frase_atual, data.BLACK)
