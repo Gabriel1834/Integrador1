@@ -128,14 +128,9 @@ def start_game():
         elif(data.estado == 'sensor'):
             print("entrou no if do sensor")
             waiting_input = True
-            # Inicia leitura em thread
-            #Primeiro Nivel
             while waiting_input:
                 if sensor_thread_done:
                     if sensor_result is not None:
-                        #logica de validacao do sensor
-                        # if sensor_result: 
-                            
                         data.estado = 'cutscene'
                         waiting_input = False
                         # resetando o valor do sensor
