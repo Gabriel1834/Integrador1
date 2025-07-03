@@ -28,6 +28,9 @@ miku_close_img = pygame.transform.scale(miku_close_img, (data.width, data.height
 hospital_img = pygame.image.load(data.hospital).convert()
 hospital_img = pygame.transform.scale(hospital_img, (data.width, data.height))
 
+aquario_img = pygame.image.load(data.aquario).convert()
+aquario_img = pygame.transform.scale(aquario_img, (data.width, data.height))
+
 background = miku_open_img
 background2 = miku_close_img
 
@@ -57,7 +60,7 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
             if(background == miku_open_img and pino == data.hospital_valor[0] and (valor > data.hospital_valor[1] - 100) or (valor < data.hospital_valor[1] + 100)):
                 running2 = False
                 return line
-            elif(background == hospital_img and pino == data.aquario_valor[0] and valor == data.aquario_valor[1]):
+            elif(background == hospital_img and pino == data.aquario_valor[0] and (valor > data.aquario_valor[1] - 100 or valor < data.aquario_valor[1]+ 100)):
                 running2 = False
                 return line
 
@@ -89,9 +92,14 @@ def cutscene(clock):
         data.frase_atual = ""
         data.index_frase += 2
         data.letra = len(data.frase_objetivo[data.index_frase])
-        background = hospital_img
-        background2 = hospital_img
+        if background == miku_open_img:
+            background = hospital_img
+            background2 = hospital_img
+        elif background == hospital_img:
+            background = aquario_img
+            background2 = aquario_img
         data.estado = "dialogo"
+        video.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
     pygame.display.flip()
     clock.tick(fps)
@@ -138,6 +146,9 @@ def start_game():
                         ser.setRTS(False)
                         sensor_result = None
                         sensor_thread_done = False
+                        thread = threading.Thread(target=read_sensor_thread, args=(ser,))
+                        thread.start()
+                        
                     else:
                         waiting_input = False
             dialogo.frase_acabou['frase_acabou'] = False

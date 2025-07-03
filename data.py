@@ -15,6 +15,7 @@ frase_objetivo = ["Olá! Boas vindas à Patoville!",
                 "Aqui é onde trabalha minha amiga Dra. Celina, a cegonha.",
                 "Ela ajuda a cuidar de famílias que estão esperando para ter um filho.",
                 "Agora, nós iremos visitar o Aquário, para chegar [passar direções para o Aquário].",
+                "*",
                 "No Aquário podemos encontrar animais marinhos de todos os cantos do planeta!",
                 "Toda a semana tem o show dos pinguins."] 
 menu_background = 'menu.png'
@@ -23,6 +24,7 @@ menu_titulo = 'titulo'
 miku_talking_open = 'miku_open.png'
 miku_talking_close = 'miku_close.png'
 hospital = 'hospital.png'
+aquario = 'aquario.png'
 estado = 'menu'
 frase_atual = ""
 index_frase = 0
