@@ -25,9 +25,6 @@ miku_close_img = pygame.image.load(data.miku_talking_close).convert()
 miku_open_img = pygame.transform.scale(miku_open_img, (data.width, data.height))
 miku_close_img = pygame.transform.scale(miku_close_img, (data.width, data.height))
 
-balao_img = pygame.image.load(data.balao).convert()
-balao_img = pygame.transform.scale(balao_img, (data.width, data.height))
-
 hospital_img = pygame.image.load(data.hospital).convert()
 hospital_img = pygame.transform.scale(hospital_img, (data.width, data.height))
 

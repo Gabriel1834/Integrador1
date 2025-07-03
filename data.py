@@ -23,7 +23,6 @@ menu_titulo = 'titulo'
 miku_talking_open = 'miku_open.png'
 miku_talking_close = 'miku_close.png'
 hospital = 'hospital.png'
-balao = 'balao.png'
 estado = 'menu'
 frase_atual = ""
 index_frase = 0
