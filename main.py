@@ -7,6 +7,7 @@ import dialogo
 import serial
 import threading
 import re
+import msvcrt
 
 pygame.init()
 
@@ -34,6 +35,8 @@ aquario_img = pygame.transform.scale(aquario_img, (data.width, data.height))
 background = miku_open_img
 background2 = miku_close_img
 
+fase = 0
+
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
 fps = video.get(cv2.CAP_PROP_FPS)
@@ -43,7 +46,7 @@ sensor_thread_done = False
 waiting_input = False
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
-    global waiting_input
+    global waiting_input, background, fase
     running2 = True
     while running2:
         line = ser.readline().decode(errors='ignore').strip()
@@ -57,12 +60,20 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
             else:
                 pino = None
             valor = int(parte_valor_str)
-            if(background == miku_open_img and pino == data.hospital_valor[0] and (valor > data.hospital_valor[1] - 100) or (valor < data.hospital_valor[1] + 100)):
-                running2 = False
-                return line
-            elif(background == hospital_img and pino == data.aquario_valor[0] and (valor > data.aquario_valor[1] - 100 or valor < data.aquario_valor[1]+ 100)):
-                running2 = False
-                return line
+            if fase == 0:
+                if(pino == data.hospital_valor[0]):
+                    if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
+                        print("sensor aquario")
+                        print("valor: ", valor)
+                        print("limite superior: ",data.hospital_valor[1] + 100)
+                        print("limite superior: ",data.hospital_valor[1] - 100)
+                        running2 = False
+                        return line
+            elif fase == 1:
+                if(pino == data.aquario_valor[0]):
+                    if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
+                        running2 = False
+                        return line
 
 
 
@@ -82,7 +93,7 @@ def fade_out():
         pygame.time.delay(30)
 
 def cutscene(clock):
-    global background, background2
+    global background, background2, fase
     success, img = video.read()
     if success:
         # Converte a imagem do OpenCV (BGR) para uma superfície do Pygame (RGB)
@@ -95,9 +106,11 @@ def cutscene(clock):
         if background == miku_open_img:
             background = hospital_img
             background2 = hospital_img
+            fase += 1
         elif background == hospital_img:
             background = aquario_img
             background2 = aquario_img
+            fase += 1
         data.estado = "dialogo"
         video.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
@@ -148,37 +161,39 @@ def start_game():
                         sensor_thread_done = False
                         thread = threading.Thread(target=read_sensor_thread, args=(ser,))
                         thread.start()
-                        
                     else:
                         waiting_input = False
+            while msvcrt.kbhit():
+                msvcrt.getch()
             dialogo.frase_acabou['frase_acabou'] = False
         elif(data.estado == 'cutscene'):
             cutscene(clock)
         elif(data.estado == 'fade'):
             fade_out()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    if(data.estado == 'menu'):
-                        print("menu")
-                        menu.game_selected()
-                    elif(data.estado == 'dialogo'):
-                        if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase])):
-                            data.frase_atual = ""
-                            data.index_frase += 1
-                            data.letra = len(data.frase_objetivo[data.index_frase])
-                        else:
-                            data.frase_atual = data.frase_objetivo[data.index_frase]
-                            dialogo.show_message(data.frase_atual, data.BLACK)
-                    elif(data.estado == 'cutscene'):
-                        screen.fill(data.BLACK)
-                        data.estado = 'dialogo'
-                        # cv2.destroyAllWindows()
+        if(data.estado == 'dialogo' or data.estado == 'menu'):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        if(data.estado == 'menu'):
+                            print("menu")
+                            menu.game_selected()
+                        elif(data.estado == 'dialogo'):
+                            if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase]) and dialogo.frase_acabou['frase_acabou'] == False):
+                                print("passa dialogo")
+                                data.frase_atual = ""
+                                data.index_frase += 1
+                                data.letra = len(data.frase_objetivo[data.index_frase])
+                            else:
+                                data.frase_atual = data.frase_objetivo[data.index_frase]
+                                dialogo.show_message(data.frase_atual, data.BLACK)
+                        elif(data.estado == 'cutscene'):
+                            screen.fill(data.BLACK)
+                            data.estado = 'dialogo'
+                            # cv2.destroyAllWindows()
 
         pygame.display.flip()
         delta_time = clock.tick(60) / 1000
