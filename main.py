@@ -63,10 +63,6 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
             if fase == 0:
                 if(pino == data.hospital_valor[0]):
                     if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
-                        print("sensor aquario")
-                        print("valor: ", valor)
-                        print("limite superior: ",data.hospital_valor[1] + 100)
-                        print("limite superior: ",data.hospital_valor[1] - 100)
                         running2 = False
                         return line
             elif fase == 1:
@@ -183,7 +179,6 @@ def start_game():
                             menu.game_selected()
                         elif(data.estado == 'dialogo'):
                             if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase]) and dialogo.frase_acabou['frase_acabou'] == False):
-                                print("passa dialogo")
                                 data.frase_atual = ""
                                 data.index_frase += 1
                                 data.letra = len(data.frase_objetivo[data.index_frase])
