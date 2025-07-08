@@ -126,7 +126,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "e que tenhamos de ajudado",
                     "a entender melhor geografia!",
                     "Um abraço e até a próxima!"]
-] 
+
 menu_background = 'menu.png'
 menu_jogar = 'menu_click.png'
 menu_titulo = 'titulo'
