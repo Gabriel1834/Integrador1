@@ -11,6 +11,8 @@ import msvcrt
 
 pygame.init()
 
+stop_thread_event = threading.Event()
+
 pygame.display.set_caption("Vrum! A Jornada")
 pygame.mixer.music.load('music_menu.mp3',"mp3")
 font = pygame.font.Font('freesansbold.ttf', 24)
@@ -47,29 +49,34 @@ waiting_input = False
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
     global waiting_input, background, fase
-    running2 = True
-    while running2:
-        line = ser.readline().decode(errors='ignore').strip()
-        print(line)
-        if line.startswith("Pino") and waiting_input == True:
-            parte_pino_str, parte_valor_str = line.split(':')
+    while not stop_thread_event.is_set():
+        try:
+            line = ser.readline().decode(errors='ignore').strip()
+            if not line:
+                continue
+            print(line)
+            if line.startswith("Pino") and waiting_input == True:
+                parte_pino_str, parte_valor_str = line.split(':')
 
-            pino_match = re.search(r'\d+', parte_pino_str)
-            if pino_match:
-                pino = int(pino_match.group())
-            else:
-                pino = None
-            valor = int(parte_valor_str)
-            if fase == 0:
-                if(pino == data.hospital_valor[0]):
-                    if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
-                        running2 = False
-                        return line
-            elif fase == 1:
-                if(pino == data.aquario_valor[0]):
-                    if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
-                        running2 = False
-                        return line
+                pino_match = re.search(r'\d+', parte_pino_str)
+                if pino_match:
+                    pino = int(pino_match.group())
+                else:
+                    pino = None
+                valor = int(parte_valor_str)
+                if fase == 0:
+                    if(pino == data.hospital_valor[0]):
+                        if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
+                            running2 = False
+                            return line
+                elif fase == 1:
+                    if(pino == data.aquario_valor[0]):
+                        if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
+                            running2 = False
+                            return line
+        except serial.SerialException:
+            print("porta serial fechada")
+            break
 
 
 
@@ -109,6 +116,7 @@ def cutscene(clock):
             fase += 1
         data.estado = "dialogo"
         video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        pygame.event.clear()
 
     pygame.display.flip()
     clock.tick(fps)
@@ -119,7 +127,7 @@ def start_game():
     clock = pygame.time.Clock()
     delta_time = 0.1
     global sensor_result, sensor_thread_done, waiting_input
-
+    ser = None
     # Abrir porta serial uma vez só
     try:
         ser = serial.Serial('COM9', 115200, timeout=1)
@@ -130,10 +138,27 @@ def start_game():
         return
     sensor_result = None
     sensor_thread_done = False
+    stop_thread_event.clear()
     thread = threading.Thread(target=read_sensor_thread, args=(ser,))
     thread.start()
 
     while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    if(data.estado == 'menu'):
+                        print("menu")
+                        menu.game_selected()
+                    elif(data.estado == 'dialogo'):
+                        if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase]) and dialogo.frase_acabou['frase_acabou'] == False):
+                            data.frase_atual = ""
+                            data.index_frase += 1
+                            data.letra = len(data.frase_objetivo[data.index_frase])
+                        else:
+                            data.frase_atual = data.frase_objetivo[data.index_frase]
+                            dialogo.show_message(data.frase_atual, data.BLACK)
         if(data.estado == 'menu'):
             menu.start()
         elif(data.estado == 'dialogo'):
@@ -166,33 +191,20 @@ def start_game():
             cutscene(clock)
         elif(data.estado == 'fade'):
             fade_out()
-        if(data.estado == 'dialogo' or data.estado == 'menu'):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
-                        if(data.estado == 'menu'):
-                            print("menu")
-                            menu.game_selected()
-                        elif(data.estado == 'dialogo'):
-                            if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase]) and dialogo.frase_acabou['frase_acabou'] == False):
-                                data.frase_atual = ""
-                                data.index_frase += 1
-                                data.letra = len(data.frase_objetivo[data.index_frase])
-                            else:
-                                data.frase_atual = data.frase_objetivo[data.index_frase]
-                                dialogo.show_message(data.frase_atual, data.BLACK)
-                        elif(data.estado == 'cutscene'):
-                            screen.fill(data.BLACK)
-                            data.estado = 'dialogo'
-                            # cv2.destroyAllWindows()
+
 
         pygame.display.flip()
         delta_time = clock.tick(60) / 1000
         delta_time = max(0.001, min(0.1, delta_time))
 
+    
+    stop_thread_event.set()
+    if ser:
+        ser.close()
+    thread.join()
     pygame.quit()
+    sys.exit()
+
+
+
 start_game()
