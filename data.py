@@ -5,6 +5,9 @@ BLACK = (0, 0, 0)
 GRAY = (100, 100, 100)
 HIGHLIGHT = (0, 200, 200)
 FADECOLOR = (0, 300, 10)
+
+frase_caminho_errado = ['Parece que você errou o caminho! Volte para o ponto anterior.', '*']
+
 frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudarei a conhecer a cidade.",
                     "Nós estamos na frente da entrada Sul da Praça Central.",
                     "Foi nela onde os fundadores moraram e deram inicio à nossa cidade.",
@@ -17,30 +20,31 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Aqui é onde trabalha minha amiga Dra. Celina, a cegonha.",
                     "Ela ajuda a cuidar de famílias que estão esperando para ter um filho.",
                     "Agora, nós iremos visitar o Aquário",
-                    "*",
-                    "Para chegar, precisamos virar à esquerda aqui",
-                    "*",
-                    "siga reto agora",
-                    "*",
-                    "Faça mais uma curva à esquerda",
-                    "*",
-                    "Por fim, vá reto novamente.",
+                    "É aquela construção azul com um peixe no letreiro!",
+                    "Você consegue chegar até lá?",
                     "*",
                     "Muito bem, nós chegamos ao Aquário!",
                     "No Aquário podemos encontrar animais marinhos de todos os cantos do planeta!",
                     "Além disso, toda semana tem shows de natação",
                     "Liderados pelo meu amigo Kadu, o pinguim.",
                     "Próximo daqui, temos o Corpo de Bombeiros",
-                    "*",
                     "Para chegar lá, vire à esquerda.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.", 
                     "*",
                     "Agora, vire à direita.",
                     "*",
+                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
+                    '*',
                     "Vire à esquerda novamente.",
                     "*",
+                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
+                    '*',
                     "Por fim, vire à direita.",
                     "*",
-                    "Parabéns, nós chegamos ao *Corpo de Bombeiros*!",
+                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
+                    '*',
+                    "Parabéns, nós chegamos ao Corpo de Bombeiros!",
                     "Sempre dispostos a ajudar quem precisa",
                     "E a combater qualquer incêndio que apareça",
                     "Patoville tem muito orgulho de seus bombeiros.",
@@ -70,7 +74,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Siga reto mais uma vez",
                     "*",
-                    "Vire à esquerda uma ultima vez",
+                    "Vire à direita uma ultima vez",
                     "*",
                     "Muito bem! chegamos à Fazenda",
                     "Aqui, vários fazendeiros trabalham diariamente cuidando de plantações e pomares.",
@@ -80,7 +84,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Primeiro, vire à direita",
                     "*",
-                    "Agora, vire à esquerda.",
+                    "Agora, vire a esquerda.",
                     "*",
                     "Por fim, vire à esquerda novamente.",
                     "*",
@@ -134,6 +138,13 @@ miku_talking_open = 'miku_open.png'
 miku_talking_close = 'miku_close.png'
 hospital = 'hospital.png'
 aquario = 'aquario.png'
+bombeiro = 'bombeiro.png'
+delegacia = 'delegacia.png'
+fazenda = 'fazenda.png'
+escola = 'escola.png'
+prefeitura = 'prefeitura.png'
+final = 'final.png'
+
 estado = 'menu'
 frase_atual = ""
 index_frase = 0
@@ -142,3 +153,55 @@ music = 0
 video_path = 'car_driving.mp4'
 hospital_valor = [26, 1456]
 aquario_valor = [27, 3091]
+#linha zero dos sensores
+
+#PINOS EM LINHA (6 SENSORES POR LINHHA)
+valor_00 = [0, 0]
+valor_01 = [0, 0]
+valor_02 = [0, 0]
+valor_03 = [0, 0]
+valor_04 = [0, 0]
+
+valor_10 = [26, 1456] # Hospital
+valor_11 = [0, 0]
+valor_12 = [0, 0] # Prefeitura
+valor_13 = [0, 0] # Bombeiro #4
+valor_14 = [0, 0] # Escola
+
+valor_20 = [0, 0] 
+valor_21 = [0, 0] # Delegacia
+valor_22 = [0, 0] # Praça Central #1
+valor_23 = [0, 0]
+valor_24 = [0, 0]
+
+valor_30 = [0, 0]
+valor_31 = [27, 3091] # Aquário
+valor_32 = [0, 0]
+valor_33 = [0, 0]
+valor_34 = [0, 0]
+
+#PINOS EM COLUNA (3 SENSORES POR LINHA)
+
+valor_40 = [0, 0]
+valor_41 = [0, 0] 
+valor_42 = [0, 0] 
+
+valor_50 = [0, 0]
+valor_51 = [0, 0]
+valor_52 = [0, 0]
+
+valor_60 = [0, 0]
+valor_61 = [0, 0] 
+valor_62 = [26, 3093] # 0
+
+valor_70 = [0, 0]
+valor_71 = [0, 0] # 3
+valor_72 = [0, 0]
+
+valor_80 = [0, 0]
+valor_81 = [0, 0] # Fim
+valor_82 = [0, 0] # Fazenda
+
+valor_90 = [0, 0]
+valor_91 = [0, 0]
+valor_92 = [0, 0]

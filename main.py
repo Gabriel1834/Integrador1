@@ -7,7 +7,6 @@ import dialogo
 import serial
 import threading
 import re
-import msvcrt
 
 pygame.init()
 
@@ -38,6 +37,7 @@ background = miku_open_img
 background2 = miku_close_img
 
 fase = 0
+primeiro_erro = False
 
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
@@ -48,7 +48,7 @@ sensor_thread_done = False
 waiting_input = False
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
-    global waiting_input, background, fase
+    global waiting_input, background, fase, primeiro_erro
     while not stop_thread_event.is_set():
         try:
             line = ser.readline().decode(errors='ignore').strip()
@@ -67,13 +67,60 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                 if fase == 0:
                     if(pino == data.hospital_valor[0]):
                         if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
-                            running2 = False
+                            data.estado = 'cutscene'
                             return line
                 elif fase == 1:
                     if(pino == data.aquario_valor[0]):
                         if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
-                            running2 = False
+                            data.estado = 'cutscene'
                             return line
+                elif fase == 2:
+                    #fase direita e esquerda
+                    contador_virada = 0
+                    #primeira virada
+                    if (primeiro_erro == False):
+                        print("primeiro erro false")
+                        if(pino == data.valor_62[0]):
+                            if((valor > data.valor_62[1] - 100) and (valor < data.valor_62[1]+ 100)):
+                                contador_virada += 1
+                                data.estado = 'dialogo'
+                                data.frase_atual = ""
+                                data.index_frase += 4
+                                data.letra = len(data.frase_objetivo[data.index_frase])
+                                primeiro_erro = False
+                                return line
+                            else:
+                                #mensagem de erro
+                                    primeiro_erro = True
+                                    data.estado = 'dialogo'
+                                    data.frase_atual = ""
+                                    data.index_frase += 2
+                                    data.letra = len(data.frase_objetivo[data.index_frase])
+                        else:
+                            #mensagem de erro
+                            primeiro_erro = True
+                            print("entrou no caminho errado")
+                            data.estado = 'dialogo'
+                            data.index_frase += 2
+                            data.frase_atual = ""
+                            data.letra = len(data.frase_objetivo[data.index_frase])
+                            return line
+                    else:
+                        if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
+                            contador_virada += 1
+                            data.estado = 'dialogo'
+                            data.frase_atual = ""
+                            data.index_frase -= 2
+                            data.letra = len(data.frase_objetivo[data.index_frase])
+                            primeiro_erro = False
+                            return line
+                        else:
+                            data.estado = 'dialogo'
+                            data.frase_atual = ""
+                            data.letra = len(data.frase_objetivo[data.index_frase])
+                            return line
+  
+                   
         except serial.SerialException:
             print("porta serial fechada")
             break
@@ -84,6 +131,7 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
 def read_sensor_thread(ser, prefix='VAL:', num_values=1):
     global sensor_result, sensor_thread_done
     sensor_result = get_average_sensor_value_from_serial(ser, prefix, num_values)
+    print(sensor_result)
     sensor_thread_done = True
 
 def fade_out():
@@ -173,7 +221,6 @@ def start_game():
             while waiting_input:
                 if sensor_thread_done:
                     if sensor_result is not None:
-                        data.estado = 'cutscene'
                         waiting_input = False
                         # resetando o valor do sensor
                         ser.setDTR(False)
@@ -184,8 +231,6 @@ def start_game():
                         thread.start()
                     else:
                         waiting_input = False
-            while msvcrt.kbhit():
-                msvcrt.getch()
             dialogo.frase_acabou['frase_acabou'] = False
         elif(data.estado == 'cutscene'):
             cutscene(clock)
