@@ -48,7 +48,8 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Sempre dispostos a ajudar quem precisa",
                     "E a combater qualquer incêndio que apareça",
                     "Patoville tem muito orgulho de seus bombeiros.",
-                    "Fazendo parte dessa equipe faiscante, temos meu amigo Pingo, o dálmata, sempre o primeiro a enfrentar as chamas.",
+                    "Fazendo parte dessa equipe faiscante, temos meu amigo Pingo",
+                    "O dálmata, sempre o primeiro a enfrentar as chamas.",
                     "Perto daqui fica a Delegacia de Policia.",
                     "O caminho para a delegacia é mais simples.",
                     "Primeiro, vire à direita.",
@@ -68,8 +69,10 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Chegamos à Delegacia!",
-                    "Os policiais de Patoville são muito bem treinados, e estão sempre trabalhando para manter a paz de todos.",
-                    "Liderando o batalhão, temos o meu amigo Major Cavalcante, o Cavalo, controlando a segurança à rédeas curtas!",
+                    "Os policiais de Patoville são muito bem treinados",
+                    "E estão sempre trabalhando para manter a paz de todos.",
+                    "Liderando o batalhão, temos o meu amigo Major Cavalcante, o Cavalo",
+                    "Controlando a segurança à rédeas curtas!",
                     "Visitaremos agora a Fazenda",
                     "Responsável por grande parte dos alimentos em nossa cidade.",
                     "Para chegar lá, vire à esquerda.",
@@ -88,7 +91,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
-                    "Vire à direita uma ultima vez",
+                    "Vire à esquerda uma ultima vez",
                     "*",
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
@@ -114,8 +117,13 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Tudo graças ao melhor professor de todos",
                     "O professor Furôncio, o furão, que sempre incentivou nossa curiosidade.",
                     "Por fim, temos a Prefeitura.",
+                    "Siga reto!",
                     "*",
-                    "Para chegar lá basta ir reto até chegar na frente da Prefeitura.",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
+                    "Siga reto, novamente",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Quem lidera Patoville hoje é o prefeito Plumário, o papagaio.",
                     "Desde que assumiu, ele ajeitou todas as ruas da cidade.",
@@ -143,6 +151,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Parece que chegamos onde precisamos",
                     "Há mais um papel aqui.",
+                    "Agora precisamos ir para o sul",
                     "*",
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
@@ -150,7 +159,11 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
-                    "Por fim, duas ruas para o Norte",
+                    "Agora, uma rua para o Norte",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
+                    "Por fim, mais uma rua para o norte",
                     "*",
                     "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
@@ -161,8 +174,7 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Para comemorar a sua vinda à nossa cidade,",
                     "resolvemos te fazer essa pequena festinha!",
                     "Espero que tenha gostado de nossa companhia",
-                    "e que tenhamos de ajudado",
-                    "a entender melhor geografia!",
+                    "E que tenhamos te ajudado a entender melhor geografia!",
                     "Um abraço e até a próxima!"]
 
 menu_background = 'menu.png'
@@ -187,57 +199,57 @@ index_frase = 0
 letra = len(frase_objetivo[index_frase])
 music = 0
 video_path = 'car_driving.mp4'
-hospital_valor = [26, 1456]
+hospital_valor = [39, 4095]
 aquario_valor = [27, 3091]
 #linha zero dos sensores
 
 #PINOS EM LINHA (6 SENSORES POR LINHHA)
-valor_00 = [0, 0]
-valor_01 = [0, 0]
-valor_02 = [0, 0]
-valor_03 = [0, 0]
-valor_04 = [0, 0]
+valor_00 = [36, 4095]
+valor_01 = [36, 3100]
+valor_02 = [36, 2270]
+valor_03 = [36, 1460]
+valor_04 = [36, 650]
 
-valor_10 = [26, 1456] # Hospital
-valor_11 = [0, 0]
-valor_12 = [0, 0] # Prefeitura
-valor_13 = [0, 0] # Bombeiro #3
-valor_14 = [0, 0] # Escola
+valor_10 = [39, 4095] # Hospital
+valor_11 = [39, 3100]
+valor_12 = [39, 2270] # Prefeitura
+valor_13 = [39, 1470] # Bombeiro #3
+valor_14 = [39, 650] # Escola
 
-valor_20 = [0, 0] 
-valor_21 = [0, 0] # Delegacia
-valor_22 = [0, 0] # Praça Central #1
-valor_23 = [0, 0]
-valor_24 = [0, 0]
+valor_20 = [14, 4095] 
+valor_21 = [14, 3100] # Delegacia
+valor_22 = [14, 2260] # Praça Central #1
+valor_23 = [14, 1450]
+valor_24 = [14, 650]
 
-valor_30 = [0, 0]
-valor_31 = [27, 3091] # Aquário
-valor_32 = [0, 0]
-valor_33 = [0, 0]
-valor_34 = [0, 0]
+valor_30 = [27, 4095]
+valor_31 = [27, 3100] # Aquário
+valor_32 = [27, 2250]
+valor_33 = [27, 1460]
+valor_34 = [27, 650]
 
 #PINOS EM COLUNA (3 SENSORES POR LINHA)
 
-valor_40 = [0, 0]
-valor_41 = [0, 0] 
-valor_42 = [0, 0] 
+valor_40 = [26, 2250]
+valor_41 = [26, 3100] 
+valor_42 = [26, 4095] 
 
-valor_50 = [0, 0]
-valor_51 = [0, 0]
-valor_52 = [0, 0]
+valor_50 = [25, 2250]
+valor_51 = [25, 3100]
+valor_52 = [25, 4095]
 
-valor_60 = [0, 0]
-valor_61 = [0, 0] 
-valor_62 = [26, 3093] # 0
+valor_60 = [33, 2250]
+valor_61 = [33, 3100] 
+valor_62 = [33, 4095] # 0
 
-valor_70 = [0, 0]
-valor_71 = [0, 0] # 2
-valor_72 = [0, 0]
+valor_70 = [32, 2250]
+valor_71 = [32, 3100] # 2
+valor_72 = [32, 4095]
 
-valor_80 = [0, 0]
-valor_81 = [0, 0] # Fim
-valor_82 = [0, 0] # Fazenda
+valor_80 = [35, 2250]
+valor_81 = [35, 3100] # Fim
+valor_82 = [35, 4095] # Fazenda
 
-valor_90 = [0, 0]
-valor_91 = [0, 0]
-valor_92 = [0, 0]
+valor_90 = [34, 2260]
+valor_91 = [34, 3100]
+valor_92 = [34, 4095]

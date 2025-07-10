@@ -66,6 +66,9 @@ contador_virada = 0
 N_viradas_shared = {
     "N_viradas": 0
 }
+Max_viradas_shared = {
+    "Max_viradas": 0
+}
 
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
@@ -105,8 +108,9 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                             data.estado = 'cutscene'
                             return line
                 elif fase == 2:
+                    Max_viradas_shared['Max_viradas'] = 3
                     # do aquario para o bombeiro
-                    print(N_viradas_shared['N_viradas'])
+                    print("numero de viradas: ",N_viradas_shared['N_viradas'])
                     #fase direita e esquerda
                     background = caminho_img
                     background2 = caminho_img
@@ -129,12 +133,9 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_71
                         valor_proximo = data.valor_13
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 3):
-                    print(N_viradas_shared['N_viradas'])
+                    Max_viradas_shared['Max_viradas'] = 3
                     #do bombeiro para a delegacia
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
@@ -157,18 +158,14 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_proximo = data.valor_22
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
                         return line
-                    elif(N_viradas_shared['N_viradas'] == 3):
-                        background = caminho_img
-                        background2 = caminho_img
+                    elif (N_viradas_shared['N_viradas'] == 3):
                         valor_anterior = data.valor_22
                         valor_proximo = data.valor_21
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 4):
                     #da delegacia pra fazenda
+                    Max_viradas_shared['Max_viradas'] = 4
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
                         background2 = caminho_img
@@ -203,12 +200,10 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_33
                         valor_proximo = data.valor_82
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 5):
                     # da fazenda para escola
+                    Max_viradas_shared['Max_viradas'] = 2
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
                         background2 = caminho_img
@@ -229,12 +224,11 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_91
                         valor_proximo = data.valor_14
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 6):
                     # da escola para a prefeitura
+                    print("Numero de viradas: ",N_viradas_shared['N_viradas'] )
+                    Max_viradas_shared['Max_viradas'] = 1
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
                         background2 = caminho_img
@@ -248,11 +242,9 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_13
                         valor_proximo = data.valor_12
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 7):
+                    Max_viradas_shared['Max_viradas'] = 3
                     # da prefeitura ao papel
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
@@ -281,13 +273,10 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_20
                         valor_proximo = data.valor_42
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                 elif(fase == 8):
                     # do papel para o final
+                    Max_viradas_shared['Max_viradas'] = 3
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
                         background2 = caminho_img
@@ -320,9 +309,6 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         valor_anterior = data.valor_82
                         valor_proximo = data.valor_81
                         verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
-                        N_viradas_shared['N_viradas'] = 0
-                        data.index_frase -= 2
-                        data.estado = 'cutscene'
                         return line
                    
         except serial.SerialException:
@@ -371,6 +357,7 @@ def cutscene(clock):
             background = bombeiro_img
             background2 = bombeiro_img
             fase += 1
+            N_viradas_shared['N_viradas'] = 0
         elif fase == 3:
             background = delegacia_img
             background2 = delegacia_img
@@ -383,6 +370,7 @@ def cutscene(clock):
             background = escola_img
             background2 = escola_img
             fase += 1
+            N_viradas_shared['N_viradas']
         elif fase == 6:
             background = prefeitura_img
             background2 = prefeitura_img
@@ -394,7 +382,6 @@ def cutscene(clock):
         elif fase == 8:
             background = final_img
             background2 = final_img
-            dialogo.gato_final()
         data.estado = "dialogo"
         video.set(cv2.CAP_PROP_POS_FRAMES, 0)
         pygame.event.clear()

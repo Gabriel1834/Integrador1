@@ -11,16 +11,22 @@ def verificacao_direita_esquerda (valor_proximo, valor_anterior, valor,line, pin
     #fase direita e esquerda do bombeiro
     #primeira virada  
     if (primeiro_erro_shared['primeiro_erro'] == False):
-        if ((pino != valor_anterior[0]) or ((valor < valor_anterior[1] - 100) or (valor > valor_anterior[1] + 100))):
+        if ((pino != valor_anterior[0]) or ((valor < valor_anterior[1] - 200) or (valor > valor_anterior[1] + 200))):
             if(pino == valor_proximo[0]):
-                if((valor > valor_proximo[1] - 100) and (valor < valor_proximo[1] + 100)):
+                if((valor > valor_proximo[1] - 200) and (valor < valor_proximo[1] + 200)):
                     print("entrou no valor")
                     data.estado = 'dialogo'
                     data.frase_atual = ""
-                    data.index_frase += 4
-                    data.letra = len(data.frase_objetivo[data.index_frase])
                     primeiro_erro_shared['primeiro_erro'] = False
-                    main.N_viradas_shared['N_viradas'] += 1
+                    if main.N_viradas_shared['N_viradas'] == main.Max_viradas_shared['Max_viradas']:
+                        main.N_viradas_shared['N_viradas'] = 0
+                        data.index_frase += 2
+                        data.letra = len(data.frase_objetivo[data.index_frase])
+                        data.estado = 'cutscene'
+                    else:  
+                        data.index_frase += 4
+                        data.letra = len(data.frase_objetivo[data.index_frase])
+                        main.N_viradas_shared['N_viradas'] += 1
                     return line
                 else:
                     #mensagem de erro
