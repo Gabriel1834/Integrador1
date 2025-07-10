@@ -7,6 +7,7 @@ import dialogo
 import serial
 import threading
 import re
+import verificacao
 
 pygame.init()
 
@@ -33,11 +34,38 @@ hospital_img = pygame.transform.scale(hospital_img, (data.width, data.height))
 aquario_img = pygame.image.load(data.aquario).convert()
 aquario_img = pygame.transform.scale(aquario_img, (data.width, data.height))
 
+bombeiro_img = pygame.image.load(data.bombeiro).convert()
+bombeiro_img = pygame.transform.scale(bombeiro_img, (data.width, data.height))
+
+delegacia_img = pygame.image.load(data.delegacia).convert()
+delegacia_img = pygame.transform.scale(delegacia_img, (data.width, data.height))
+
+fazenda_img = pygame.image.load(data.fazenda).convert()
+fazenda_img = pygame.transform.scale(fazenda_img, (data.width, data.height))
+
+escola_img = pygame.image.load(data.escola).convert()
+escola_img = pygame.transform.scale(escola_img, (data.width, data.height))
+
+prefeitura_img = pygame.image.load(data.prefeitura).convert()
+prefeitura_img = pygame.transform.scale(prefeitura_img, (data.width, data.height))
+
+papel_img = pygame.image.load(data.papel).convert()
+papel_img = pygame.transform.scale(papel_img, (data.width, data.height))
+
+final_img = pygame.image.load(data.final).convert()
+final_img = pygame.transform.scale(final_img, (data.width, data.height))
+
+caminho_img = pygame.image.load(data.caminho).convert()
+caminho_img = pygame.transform.scale(caminho_img, (data.width, data.height))
+
 background = miku_open_img
 background2 = miku_close_img
 
 fase = 0
-primeiro_erro = False
+contador_virada = 0
+N_viradas_shared = {
+    "N_viradas": 0
+}
 
 video = cv2.VideoCapture(data.video_path)
 success, img = video.read()
@@ -48,7 +76,7 @@ sensor_thread_done = False
 waiting_input = False
 
 def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
-    global waiting_input, background, fase, primeiro_erro
+    global waiting_input, background, background2, fase, contador_virada, N_viradas, acertou
     while not stop_thread_event.is_set():
         try:
             line = ser.readline().decode(errors='ignore').strip()
@@ -65,61 +93,237 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                     pino = None
                 valor = int(parte_valor_str)
                 if fase == 0:
+                    # da praça para o hospital
                     if(pino == data.hospital_valor[0]):
                         if((valor > data.hospital_valor[1] - 100) and (valor < data.hospital_valor[1] + 100)):
                             data.estado = 'cutscene'
                             return line
                 elif fase == 1:
+                    # do hospital para o aquario
                     if(pino == data.aquario_valor[0]):
                         if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
                             data.estado = 'cutscene'
                             return line
                 elif fase == 2:
+                    # do aquario para o bombeiro
+                    print(N_viradas_shared['N_viradas'])
                     #fase direita e esquerda
-                    contador_virada = 0
-                    #primeira virada
-                    if (primeiro_erro == False):
-                        print("primeiro erro false")
-                        if(pino == data.valor_62[0]):
-                            if((valor > data.valor_62[1] - 100) and (valor < data.valor_62[1]+ 100)):
-                                contador_virada += 1
+                    background = caminho_img
+                    background2 = caminho_img
+                    if (N_viradas_shared['N_viradas'] == 0):
+                        valor_anterior = data.valor_31
+                        valor_proximo = data.valor_62
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif (N_viradas_shared['N_viradas'] == 1):
+                        valor_anterior = data.valor_62
+                        valor_proximo = data.valor_22
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif (N_viradas_shared['N_viradas'] == 2):
+                        valor_anterior = data.valor_22
+                        valor_proximo = data.valor_71
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif (N_viradas_shared['N_viradas'] == 3):
+                        valor_anterior = data.valor_71
+                        valor_proximo = data.valor_13
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 3):
+                    print(N_viradas_shared['N_viradas'])
+                    #do bombeiro para a delegacia
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_13
+                        valor_proximo = data.valor_81
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor,line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_81
+                        valor_proximo = data.valor_23
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 2):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_23
+                        valor_proximo = data.valor_22
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 3):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_22
+                        valor_proximo = data.valor_21
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 4):
+                    #da delegacia pra fazenda
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_21
+                        valor_proximo = data.valor_52
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor,line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_52
+                        valor_proximo = data.valor_31
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 2):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_31
+                        valor_proximo = data.valor_32
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 3):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_32
+                        valor_proximo = data.valor_33
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 4):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_33
+                        valor_proximo = data.valor_82
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 5):
+                    # da fazenda para escola
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_82
+                        valor_proximo = data.valor_24
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_24
+                        valor_proximo = data.valor_91
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 2):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_91
+                        valor_proximo = data.valor_14
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 6):
+                    # da escola para a prefeitura
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_14
+                        valor_proximo = data.valor_13
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_13
+                        valor_proximo = data.valor_12
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 7):
+                    # da prefeitura ao papel
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_12
+                        valor_proximo = data.valor_11
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor,line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_11
+                        valor_proximo = data.valor_51
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 2):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_51
+                        valor_proximo = data.valor_20
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 3):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_20
+                        valor_proximo = data.valor_42
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
+                elif(fase == 8):
+                    # do papel para o final
+                    if(N_viradas_shared['N_viradas'] == 0):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_42
+                        valor_proximo = data.valor_30
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor,line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 1):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_proximo = data.valor_33
+                        if(pino == valor_proximo[0]):
+                            if((valor > valor_proximo[1] - 100) and (valor < valor_proximo[1] + 100)):
                                 data.estado = 'dialogo'
                                 data.frase_atual = ""
                                 data.index_frase += 4
                                 data.letra = len(data.frase_objetivo[data.index_frase])
-                                primeiro_erro = False
-                                return line
-                            else:
-                                #mensagem de erro
-                                    primeiro_erro = True
-                                    data.estado = 'dialogo'
-                                    data.frase_atual = ""
-                                    data.index_frase += 2
-                                    data.letra = len(data.frase_objetivo[data.index_frase])
-                        else:
-                            #mensagem de erro
-                            primeiro_erro = True
-                            print("entrou no caminho errado")
-                            data.estado = 'dialogo'
-                            data.index_frase += 2
-                            data.frase_atual = ""
-                            data.letra = len(data.frase_objetivo[data.index_frase])
-                            return line
-                    else:
-                        if ((valor > data.aquario_valor[1] - 100) and (valor < data.aquario_valor[1]+ 100)):
-                            contador_virada += 1
-                            data.estado = 'dialogo'
-                            data.frase_atual = ""
-                            data.index_frase -= 2
-                            data.letra = len(data.frase_objetivo[data.index_frase])
-                            primeiro_erro = False
-                            return line
-                        else:
-                            data.estado = 'dialogo'
-                            data.frase_atual = ""
-                            data.letra = len(data.frase_objetivo[data.index_frase])
-                            return line
-  
+                                N_viradas_shared['N_viradas'] += 1
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 2):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_33
+                        valor_proximo = data.valor_82
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        return line
+                    elif(N_viradas_shared['N_viradas'] == 3):
+                        background = caminho_img
+                        background2 = caminho_img
+                        valor_anterior = data.valor_82
+                        valor_proximo = data.valor_81
+                        verificacao.verificacao_direita_esquerda(valor_proximo, valor_anterior, valor, line, pino)
+                        N_viradas_shared['N_viradas'] = 0
+                        data.index_frase -= 2
+                        data.estado = 'cutscene'
+                        return line
                    
         except serial.SerialException:
             print("porta serial fechada")
@@ -144,7 +348,7 @@ def fade_out():
         pygame.time.delay(30)
 
 def cutscene(clock):
-    global background, background2, fase
+    global background, background2, fase, contador_virada
     success, img = video.read()
     if success:
         # Converte a imagem do OpenCV (BGR) para uma superfície do Pygame (RGB)
@@ -154,6 +358,7 @@ def cutscene(clock):
         data.frase_atual = ""
         data.index_frase += 2
         data.letra = len(data.frase_objetivo[data.index_frase])
+        contador_virada = 0
         if background == miku_open_img:
             background = hospital_img
             background2 = hospital_img
@@ -162,6 +367,34 @@ def cutscene(clock):
             background = aquario_img
             background2 = aquario_img
             fase += 1
+        elif fase == 2:
+            background = bombeiro_img
+            background2 = bombeiro_img
+            fase += 1
+        elif fase == 3:
+            background = delegacia_img
+            background2 = delegacia_img
+            fase += 1
+        elif fase == 4:
+            background = fazenda_img
+            background2 = fazenda_img
+            fase += 1
+        elif fase == 5:
+            background = escola_img
+            background2 = escola_img
+            fase += 1
+        elif fase == 6:
+            background = prefeitura_img
+            background2 = prefeitura_img
+            fase += 1
+        elif fase == 7:
+            background = papel_img
+            background2 = papel_img
+            fase += 1
+        elif fase == 8:
+            background = final_img
+            background2 = final_img
+            dialogo.gato_final()
         data.estado = "dialogo"
         video.set(cv2.CAP_PROP_POS_FRAMES, 0)
         pygame.event.clear()

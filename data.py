@@ -34,16 +34,16 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "*",
                     "Agora, vire à direita.",
                     "*",
-                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
-                    '*',
+                    "Parece que você errou o caminho! Volte para o ponto anterior.", 
+                    "*",
                     "Vire à esquerda novamente.",
                     "*",
-                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
-                    '*',
+                    "Parece que você errou o caminho! Volte para o ponto anterior.", 
+                    "*",
                     "Por fim, vire à direita.",
                     "*",
-                    'Parece que você errou o caminho! Volte para o ponto anterior.', 
-                    '*',
+                    "Parece que você errou o caminho! Volte para o ponto anterior.", 
+                    "*",
                     "Parabéns, nós chegamos ao Corpo de Bombeiros!",
                     "Sempre dispostos a ajudar quem precisa",
                     "E a combater qualquer incêndio que apareça",
@@ -51,42 +51,63 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Fazendo parte dessa equipe faiscante, temos meu amigo Pingo, o dálmata, sempre o primeiro a enfrentar as chamas.",
                     "Perto daqui fica a Delegacia de Policia.",
                     "O caminho para a delegacia é mais simples.",
-                    "*",
                     "Primeiro, vire à direita.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Vire à direita novamente.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Agora, siga reto.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Siga reto novamente.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Chegamos à Delegacia!",
                     "Os policiais de Patoville são muito bem treinados, e estão sempre trabalhando para manter a paz de todos.",
                     "Liderando o batalhão, temos o meu amigo Major Cavalcante, o Cavalo, controlando a segurança à rédeas curtas!",
                     "Visitaremos agora a Fazenda",
                     "Responsável por grande parte dos alimentos em nossa cidade.",
-                    "*",
                     "Para chegar lá, vire à esquerda.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Vire novamente à esquerda.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Agora, siga reto.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Siga reto mais uma vez",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Vire à direita uma ultima vez",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Muito bem! chegamos à Fazenda",
                     "Aqui, vários fazendeiros trabalham diariamente cuidando de plantações e pomares.",
                     "Entre eles está minha amiga, Chica, a galinha",
                     "Penando do nascer ao por do Sol.",
                     "Em sequência, vamos conhecer a Escola",
-                    "*",
                     "Primeiro, vire à direita",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Agora, vire a esquerda.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Por fim, vire à esquerda novamente.",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Muito bem!, chegamos aqui sem nenhum problema!",
                     "Foi aqui onde conheci todos os meus amigos e descobri minha paixão por geografia!",
@@ -104,21 +125,34 @@ frase_objetivo = ["Olá, e boas vindas à Patoville!","Eu sou a Miku e te ajudar
                     "Mas está usando os pontos cardeais...",
                     "Se usarmos a Rosa dos Ventos da praça",
                     "nós podemos desvendar essa pista!",
-                    "*",
                     "Primeiro, vá uma rua para o Oeste",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Agora, vá uma rua para o Sul",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Vá uma rua para o Oeste novamente",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Por fim, mais uma rua ao Sul",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Parece que chegamos onde precisamos",
                     "Há mais um papel aqui.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Agora precisamos ir todo o caminho para o Leste.",
                     "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
+                    "*",
                     "Por fim, duas ruas para o Norte",
+                    "*",
+                    "Parece que você errou o caminho! Volte para o ponto anterior.",
                     "*",
                     "Parece que chegamos ao nosso último destino",
                     "Mas espere, esta é a minha casa!!",
@@ -143,7 +177,9 @@ delegacia = 'delegacia.png'
 fazenda = 'fazenda.png'
 escola = 'escola.png'
 prefeitura = 'prefeitura.png'
+caminho = 'caminho.png'
 final = 'final.png'
+papel = 'papel.png'
 
 estado = 'menu'
 frase_atual = ""
@@ -165,7 +201,7 @@ valor_04 = [0, 0]
 valor_10 = [26, 1456] # Hospital
 valor_11 = [0, 0]
 valor_12 = [0, 0] # Prefeitura
-valor_13 = [0, 0] # Bombeiro #4
+valor_13 = [0, 0] # Bombeiro #3
 valor_14 = [0, 0] # Escola
 
 valor_20 = [0, 0] 
@@ -195,7 +231,7 @@ valor_61 = [0, 0]
 valor_62 = [26, 3093] # 0
 
 valor_70 = [0, 0]
-valor_71 = [0, 0] # 3
+valor_71 = [0, 0] # 2
 valor_72 = [0, 0]
 
 valor_80 = [0, 0]
