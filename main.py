@@ -110,7 +110,6 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                 elif fase == 2:
                     Max_viradas_shared['Max_viradas'] = 3
                     # do aquario para o bombeiro
-                    print("numero de viradas: ",N_viradas_shared['N_viradas'])
                     #fase direita e esquerda
                     background = caminho_img
                     background2 = caminho_img
@@ -227,7 +226,6 @@ def get_average_sensor_value_from_serial(ser, prefix='VAL:', num_values=1):
                         return line
                 elif(fase == 6):
                     # da escola para a prefeitura
-                    print("Numero de viradas: ",N_viradas_shared['N_viradas'] )
                     Max_viradas_shared['Max_viradas'] = 1
                     if(N_viradas_shared['N_viradas'] == 0):
                         background = caminho_img
@@ -417,7 +415,6 @@ def start_game():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
                     if(data.estado == 'menu'):
-                        print("menu")
                         menu.game_selected()
                     elif(data.estado == 'dialogo'):
                         if(len(data.frase_atual) == len(data.frase_objetivo[data.index_frase]) and dialogo.frase_acabou['frase_acabou'] == False):
@@ -431,12 +428,10 @@ def start_game():
             menu.start()
         elif(data.estado == 'dialogo'):
             if dialogo.frase_acabou['frase_acabou']:
-                print("entrou no if da frase")
                 data.estado = 'sensor'
             else:
                 dialogo.gato(data.index_frase, background, background2)
         elif(data.estado == 'sensor'):
-            print("entrou no if do sensor")
             waiting_input = True
             while waiting_input:
                 if sensor_thread_done:
